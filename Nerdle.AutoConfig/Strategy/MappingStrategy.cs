@@ -37,6 +37,11 @@ namespace Nerdle.AutoConfig.Strategy
                 return strategy;
 
             var defaultValueAttribute = property.GetCustomAttributes<DefaultValueAttribute>(true).SingleOrDefault();
+            if (defaultValueAttribute == null)
+            {
+                var interfaceProperties = property.DeclaringType?.GetInterfaces().Select(e => e.GetProperties().SingleOrDefault(p => p.Name == property.Name));
+                defaultValueAttribute = interfaceProperties?.FirstOrDefault()?.GetCustomAttributes<DefaultValueAttribute>(true).SingleOrDefault();
+            }
             return defaultValueAttribute != null ? new PropertyStrategy(defaultValueAttribute.Value) : DefaultPropertyStrategy;
         }
 

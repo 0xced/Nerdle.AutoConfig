@@ -36,26 +36,6 @@ namespace Nerdle.AutoConfig.TypeGeneration
             var field = typeBuilder.DefineField("_" + property.Name, property.PropertyType, FieldAttributes.Private);
             var propertyBuilder = typeBuilder.DefineProperty(property.Name, PropertyAttributes.HasDefault, property.PropertyType, null);
 
-            var defaultValueAttribute = property.GetCustomAttributes<DefaultValueAttribute>(true).SingleOrDefault();
-            if (defaultValueAttribute != null)
-            {
-                try
-                {
-                    var constructor = typeof(DefaultValueAttribute).GetConstructor(new[] { property.PropertyType }) ?? throw new MissingMethodException("DefaultValueAttribute(object) constructor not found");
-                    var customAttributeBuilder = new CustomAttributeBuilder(constructor, new[] { defaultValueAttribute.Value });
-                    propertyBuilder.SetCustomAttribute(customAttributeBuilder);
-                }
-                catch (ArgumentException)
-                {
-                    // exception.Message == "Cannot emit a CustomAttribute with argument of type {type}." (happens when {type} == System.DateTime for example)
-                    // So we round-trip the unsupported type to string and use the DefaultValueAttribute(Type, string) constructor.
-                    var defaultValue = TypeDescriptor.GetConverter(property.PropertyType).ConvertToInvariantString(defaultValueAttribute.Value);
-                    var constructor = typeof(DefaultValueAttribute).GetConstructor(new[] { typeof(Type), typeof(string) }) ?? throw new MissingMethodException("DefaultValueAttribute(Type, string) constructor not found");
-                    var customAttributeBuilder = new CustomAttributeBuilder(constructor, new object[] { property.PropertyType, defaultValue });
-                    propertyBuilder.SetCustomAttribute(customAttributeBuilder);
-                }
-            }
-
             return typeBuilder
                 .EmitGetter(propertyBuilder, property, field)
                 .EmitSetter(propertyBuilder, property, field);
