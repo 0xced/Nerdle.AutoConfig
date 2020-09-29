@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Linq;
+using Nerdle.AutoConfig.Extensions;
 using Nerdle.AutoConfig.Mapping;
 using Nerdle.AutoConfig.Sections;
 using Nerdle.AutoConfig.Strategy;
@@ -33,6 +34,14 @@ namespace Nerdle.AutoConfig
 
         public object Map(Type type, XElement element, IMappingStrategy strategy = null)
         {
+            if (/*!type.HasParameterlessConstructor() &&*/!element.HasElements && !element.HasAttributes)
+            {
+                var constructor = type.GetConstructor(new[] {typeof(string)});
+                if (constructor != null)
+                {
+                    return constructor.Invoke(new object[] {element.Value});
+                }
+            }
             var instance = _typeFactory.InstanceOf(type);
             // since the type param might be an interface, and we need the concrete type
             var concreteType = instance.GetType();

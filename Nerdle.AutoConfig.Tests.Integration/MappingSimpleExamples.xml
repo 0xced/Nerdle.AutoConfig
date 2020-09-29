@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
 
   <configSections>
@@ -7,6 +7,9 @@
 
   <simpleConfiguration>
     <myString>hello</myString>
+    <myProxy>http://proxy.example.com:8080</myProxy>
+    <myFileInfo>file</myFileInfo>
+    <myDirectoryInfo>dir</myDirectoryInfo>
     <myInt>42</myInt>
     <myNullable>23</myNullable>
     <myEmptyNullable></myEmptyNullable>

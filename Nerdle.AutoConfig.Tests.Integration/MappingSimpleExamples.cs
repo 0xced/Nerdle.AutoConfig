@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Net;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -20,6 +22,9 @@ namespace Nerdle.AutoConfig.Tests.Integration
             config.MyNullable.Should().Be(23);
             config.MyEmptyNullable.Should().NotHaveValue();
             config.MyTimeSpan.Should().Be(TimeSpan.FromMinutes(5));
+            config.MyProxy.Address.Should().Be(new Uri("http://proxy.example.com:8080"));
+            config.MyFileInfo.Name.Should().Be("file");
+            config.MyDirectoryInfo.Name.Should().Be("dir");
         }
 
         [Test]
@@ -35,6 +40,9 @@ namespace Nerdle.AutoConfig.Tests.Integration
             config.MyNullable.Should().Be(23);
             config.MyEmptyNullable.Should().NotHaveValue();
             config.MyTimeSpan.Should().Be(TimeSpan.FromMinutes(5));
+            config.MyProxy.Address.Should().Be(new Uri("http://proxy.example.com:8080"));
+            config.MyFileInfo.Name.Should().Be("file");
+            config.MyDirectoryInfo.Name.Should().Be("dir");
         }
 
         public interface ISimpleConfiguration
@@ -46,6 +54,9 @@ namespace Nerdle.AutoConfig.Tests.Integration
             int? MyNullable { get; }
             int? MyEmptyNullable { get; }
             TimeSpan MyTimeSpan { get; }
+            WebProxy MyProxy { get; }
+            FileInfo MyFileInfo { get; }
+            DirectoryInfo MyDirectoryInfo { get; }
         }
 
         public class SimpleConfiguration
@@ -57,6 +68,9 @@ namespace Nerdle.AutoConfig.Tests.Integration
             public int? MyNullable { get; set; }
             public int? MyEmptyNullable { get; set; }
             public TimeSpan MyTimeSpan { get; set; }
+            public WebProxy MyProxy { get; set; }
+            public FileInfo MyFileInfo { get; set;  }
+            public DirectoryInfo MyDirectoryInfo { get; set;  }
         }
     }
 }
